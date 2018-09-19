@@ -1,6 +1,9 @@
 const pg = require('pg');
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 const Pool = pg.Pool;
 const port = process.env.PORT || 5000;
 
@@ -43,6 +46,18 @@ app.get('/shoes', (req, res) => {
     })
     .catch((error) => {
       console.log('error with SQL select for shoes', error);
+      res.sendStatus(500);
+    })
+})
+app.post('/shoes', (req, res) => {
+
+  pool.query(`INSERT INTO "shoes" ("name", "cost")
+            VALUES ('${req.body.name}', '${req.body.cost}');`)
+    .then(() => {
+      res.send(201);
+    })
+    .catch((error) => {
+      console.log('error with SQL insert for shoes', error);
       res.sendStatus(500);
     })
 })
